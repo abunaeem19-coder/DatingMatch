@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoveSpark — Find Your Soulmate Today</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .font-playfair { font-family: 'Playfair Display', serif; }
+
+        /* Gradient animation */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .animated-gradient {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24, #f368e0, #ff6b6b);
+            background-size: 300% 300%;
+            animation: gradientShift 6s ease infinite;
+        }
+
+        /* Pulse ring on button */
+        @keyframes pulseRing {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+        .pulse-ring::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 9999px;
+            border: 2px solid #ff6b6b;
+            animation: pulseRing 2s ease-out infinite;
+        }
+
+        /* Heart float animation */
+        @keyframes floatHeart {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-120px) scale(0.5); opacity: 0; }
+        }
+        .float-heart {
+            animation: floatHeart 2s ease-out forwards;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        /* Progress bar animation */
+        @keyframes progressFill {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Fade in up */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-up { animation: fadeInUp 0.6s ease forwards; }
+
+        /* Circular progress */
+        @keyframes circularProgress {
+            from { stroke-dashoffset: 283; }
+        }
+
+        /* Bar chart animation */
+        @keyframes barGrow {
+            from { height: 0; }
+        }
+
+        /* Smooth scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1a1a2e; }
+        ::-webkit-scrollbar-thumb { background: #ff6b6b; border-radius: 3px; }
+
+        /* Ad banner placeholder styling */
+        .ad-banner {
+            background: linear-gradient(135deg, #1e1e3a 0%, #2a2a4a 100%);
+            border: 1px dashed rgba(255, 107, 107, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .ad-banner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255,255,255,0.01) 10px,
+                rgba(255,255,255,0.01) 20px
+            );
+        }
+
+        /* Custom radio/select styling */
+        .gender-option, .interest-option {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .gender-option:hover, .interest-option:hover {
+            border-color: #ff6b6b !important;
+            transform: translateY(-2px);
+        }
+        .gender-option.active, .interest-option.active {
+            border-color: #ff6b6b !important;
+            background: rgba(255, 107, 107, 0.1) !important;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.2);
+        }
+
+        /* Stat card hover */
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(255, 107, 107, 0.15);
+        }
+
+        /* Loading dots */
+        @keyframes loadDot {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        .load-dot:nth-child(1) { animation-delay: 0s; }
+        .load-dot:nth-child(2) { animation-delay: 0.2s; }
+        .load-dot:nth-child(3) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body class="bg-[#0f0f23] text-white min-h-screen">
+
+    <!-- ==================== TOP AD BANNER ==================== -->
+    <div class="w-full bg-[#0a0a1a] py-2">
+        <div class="max-w-4xl mx-auto px-4">
+            <div id="ad-banner-top" class="ad-banner rounded-lg h-[90px] flex items-center justify-center">
+                <div class="text-center z-10 relative">
+                    <p class="text-xs text-gray-500 uppercase tracking-widest">Advertisement</p>
+                    <p class="text-[10px] text-gray-600 mt-1">— Ad Banner 728×90 —</p>
+                    <!-- ADSTERRA AD CODE GOES HERE -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="w-full py-5 px-6 flex items-center justify-between max-w-6xl mx-auto">
+        <div class="flex items-center gap-2">
+            <div class="w-9 h-9 animated-gradient rounded-xl flex items-center justify-center text-lg">💘</div>
+            <span class="text-xl font-bold tracking-tight">Love<span class="text-[#ff6b6b]">Spark</span></span>
+        </div>
+        <div class="hidden md:flex items-center gap-8 text-sm text-gray-400">
+            <a href="#" class="hover:text-white transition">How It Works</a>
+            <a href="#" class="hover:text-white transition">Success Stories</a>
+            <a href="#" class="hover:text-white transition">Safety</a>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="text-xs text-gray-500 hidden sm:block">🟢 12,847 online</span>
+        </div>
+    </nav>
+
+    <!-- ==================== HERO SECTION ==================== -->
+    <section class="max-w-6xl mx-auto px-6 pt-10 pb-16 text-center">
+        <div class="inline-block px-4 py-1.5 bg-[#1a1a3e] rounded-full text-xs text-[#ff6b6b] font-medium mb-6 border border-[#ff6b6b20]">
+            ✨ #1 Trusted Matchmaking Platform — 2M+ Happy Couples
+        </div>
+        <h1 class="font-playfair text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
+            Find Your <span class="text-transparent bg-clip-text animated-gradient">Perfect</span><br>Soulmate
+        </h1>
+        <p class="text-gray-400 text-base sm:text-lg max-w-xl mx-auto mb-10 leading-relaxed">
+            Answer three simple questions and our AI-powered algorithm will analyze millions of profiles to find your ideal match.
+        </p>
+
+        <!-- Trust badges -->
+        <div class="flex flex-wrap items-center justify-center gap-6 mb-12 text-xs text-gray-500">
+            <span class="flex items-center gap-1.5"><span class="text-green-400">🔒</span> 256-bit Encrypted</span>
+            <span class="flex items-center gap-1.5"><span class="text-yellow-400">⭐</span> 4.9/5 Rating</span>
+            <span class="flex items-center gap-1.5"><span class="text-blue-400">✓</span> Verified Profiles</span>
+            <span class="flex items-center gap-1.5"><span class="text-pink-400">❤️</span> 98% Match Rate</span>
+        </div>
+    </section>
+
+    <!-- ==================== FORM SECTION ==================== -->
+    <section id="form-section" class="max-w-2xl mx-auto px-6 pb-16">
+        <div class="bg-[#16162d] rounded-3xl p-6 sm:p-10 border border-[#ffffff08] shadow-2xl shadow-black/30">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold mb-2">Tell Us About You</h2>
+                <p class="text-sm text-gray-500">It only takes 30 seconds</p>
+            </div>
+
+            <!-- Step indicator -->
+            <div class="flex items-center justify-center gap-2 mb-10">
+                <div id="step1-dot" class="w-10 h-1.5 rounded-full bg-[#ff6b6b] transition-all duration-500"></div>
+                <div id="step2-dot" class="w-10 h-1.5 rounded-full bg-[#2a2a4a] transition-all duration-500"></div>
+                <div id="step3-dot" class="w-10 h-1.5 rounded-full bg-[#2a2a4a] transition-all duration-500"></div>
+            </div>
+
+            <!-- STEP 1: Age -->
+            <div id="step1" class="fade-in-up">
+                <label class="block text-sm font-medium text-gray-400 mb-4 text-center uppercase tracking-wider">Step 1 — Your Age</label>
+                <div class="flex items-center justify-center gap-6 mb-6">
+                    <button onclick="adjustAge(-1)" class="w-12 h-12 rounded-2xl bg-[#1e1e3a] border border-[#ffffff10] flex items-center justify-center text-xl hover:border-[#ff6b6b] transition active:scale-90">−</button>
+                    <div class="text-center">
+                        <span id="age-display" class="text-6xl font-bold text-transparent bg-clip-text animated-gradient">25</span>
+                        <p class="text-xs text-gray-600 mt-1">years old</p>
+                    </div>
+                    <button onclick="adjustAge(1)" class="w-12 h-12 rounded-2xl bg-[#1e1e3a] border border-[#ffffff10] flex items-center justify-center text-xl hover:border-[#ff6b6b] transition active:scale-90">+</button>
+                </div>
+                <input id="age-range" type="range" min="18" max="65" value="25" oninput="updateAge(this.value)"
+                    class="w-full h-1.5 bg-[#2a2a4a] rounded-full appearance-none cursor-pointer accent-[#ff6b6b] mb-8">
+                <div class="flex justify-between text-[10px] text-gray-600 -mt-6 mb-8 px-1">
+                    <span>18</span><span>30</span><span>40</span><span>50</span><span>65</span>
+                </div>
+                <button onclick="goToStep(2)" class="w-full py-4 rounded-2xl animated-gradient text-white font-semibold text-sm hover:opacity-90 transition active:scale-[0.98]">
+                    Continue →
+                </button>
+            </div>
+
+            <!-- STEP 2: Gender -->
+            <div id="step2" class="hidden">
+                <label class="block text-sm font-medium text-gray-400 mb-6 text-center uppercase tracking-wider">Step 2 — Your Gender</label>
+                <div class="grid grid-cols-3 gap-3 mb-8">
+                    <div onclick="selectGender('Male', this)" class="gender-option bg-[#1e1e3a] border border-[#ffffff10] rounded-2xl p-5 text-center">
+                        <div class="text-3xl mb-2">👨</div>
+                        <span class="text-sm font-medium">Male</span>
+                    </div>
+                    <div onclick="selectGender('Female', this)" class="gender-option bg-[#1e1e3a] border border-[#ffffff10] rounded-2xl p-5 text-center">
+                        <div class="text-3xl mb-2">👩</div>
+                        <span class="text-sm font-medium">Female</span>
+                    </div>
+                    <div onclick="selectGender('Other', this)" class="gender-option bg-[#1e1e3a] border border-[#ffffff10] rounded-2xl p-5 text-center">
+                        <div class="text-3xl mb-2">🧑</div>
+                        <span class="text-sm font-medium">Other</span>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="goToStep(1)" class="w-1/3 py-4 rounded-2xl bg-[#1e1e3a] border border-[#ffffff10] text-gray-400 text-sm hover:border-[#ff6b6b] transition">← Back</button>
+                    <button id="step2-next" onclick="goToStep(3)" disabled class="w-2/3 py-4 rounded-2xl animated-gradient text-white font-semibold text-sm hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]">
+                        Continue →
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Interest -->
+            <div id="step3" class="hidden">
+                <label class="block text-sm font-medium text-gray-400 mb-6 text-center uppercase tracking-wider">Step 3 — Interested In</label>
+                <div class="grid grid-cols-3 gap-3 mb-4">
+                    <div onclick="selectInterest('Men', this)" class="interest-option bg-[#1e1e3a] border border-[#ffffff10] rounded-2xl p-5 text-center">
+                        <div class="text-3xl mb-2">👨</div>
+                        <span class="text-sm font-medium">Men</span>
+                    </div>
+                    <div onclick="selectInterest('Women', this)" class="interest-option bg-[#1e1e3a] border border-[#ffffff10] rounded-2xl p-5 text-center">
+                        <div class="text-3xl mb-2">👩</div>
+                        <span class="text-sm font-medium">Women</span>
+                    </div>
+                    <div onclick="selectInterest('Both', this)" class="interest-option bg-[#1e1e3a] border border-[#ffffff10] rounded-2xl p-5 text-center">
+                        <div class="text-3xl mb-2">💕</div>
+                        <span class="text-sm font-medium">Both</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 my-6 px-1">
+                    <input type="checkbox" id="terms" class="accent-[#ff6b6b] w-4 h-4 rounded">
+                    <label for="terms" class="text-xs text-gray-500">I agree to the <a href="#" class="text-[#ff6b6b] underline">Terms of Service</a> & <a href="#" class="text-[#ff6b6b] underline">Privacy Policy</a></label>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="goToStep(2)" class="w-1/3 py-4 rounded-2xl bg-[#1e1e3a] border border-[#ffffff10] text-gray-400 text-sm hover:border-[#ff6b6b] transition">← Back</button>
+                    <button id="find-btn" onclick="findSoulmate()" disabled class="w-2/3 py-4 rounded-2xl animated-gradient text-white font-bold text-sm hover:opacity-90 transition relative pulse-ring disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]">
+                        💘 Find My Soulmate
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== MIDDLE AD BANNER ==================== -->
+    <div class="max-w-4xl mx-auto px-4 pb-10">
+        <div id="ad-banner-middle" class="ad-banner rounded-xl h-[250px] flex items-center justify-center">
+            <div class="text-center z-10 relative">
+                <p class="text-xs text-gray-500 uppercase tracking-widest">Advertisement</p>
+                <p class="text-[10px] text-gray-600 mt-1">— Ad Banner 300×250 —</p>
+                <!-- ADSTERRA AD CODE GOES HERE -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== LOADING & RESULTS SECTION ==================== -->
+    <section id="loading-section" class="hidden max-w-2xl mx-auto px-6 pb-16 text-center">
+        <div class="bg-[#16162d] rounded-3xl p-10 border border-[#ffffff08]">
+            <div class="mb-6">
+                <div class="text-5xl mb-4" id="loading-emoji">💘</div>
+                <h2 class="text-xl font-bold mb-2" id="loading-text">Analyzing Your Profile...</h2>
+                <p class="text-sm text-gray-500" id="loading-sub">Scanning 2,847,392 profiles near you</p>
+            </div>
+            <!-- Progress bar -->
+            <div class="w-full bg-[#2a2a4a] rounded-full h-2 mb-4 overflow-hidden">
+                <div id="progress-bar" class="h-full rounded-full animated-gradient transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <p id="progress-text" class="text-xs text-gray-600">0%</p>
+            <!-- Loading dots -->
+            <div class="flex justify-center gap-2 mt-6">
+                <div class="load-dot w-2.5 h-2.5 bg-[#ff6b6b] rounded-full" style="animation: loadDot 1.4s infinite ease-in-out both;"></div>
+                <div class="load-dot w-2.5 h-2.5 bg-[#ff6b6b] rounded-full" style="animation: loadDot 1.4s infinite ease-in-out both;"></div>
+                <div class="load-dot w-2.5 h-2.5 bg-[#ff6b6b] rounded-full" style="animation: loadDot 1.4s infinite ease-in-out both;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== RESULTS / VISUALIZATION ==================== -->
+    <section id="results-section" class="hidden max-w-4xl mx-auto px-6 pb-16">
+        <div class="text-center mb-10 fade-in-up">
+            <div class="text-5xl mb-4">🎉</div>
+            <h2 class="text-3xl sm:text-4xl font-bold mb-2 font-playfair">Great News!</h2>
+            <p class="text-gray-400 text-sm">We found potential matches based on your preferences</p>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+            <div class="stat-card bg-[#16162d] rounded-2xl p-5 text-center border border-[#ffffff08]">
+                <div class="text-2xl font-bold text-[#ff6b6b]" id="stat-matches">—</div>
+                <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">Matches Found</div>
+            </div>
+            <div class="stat-card bg-[#16162d] rounded-2xl p-5 text-center border border-[#ffffff08]">
+                <div class="text-2xl font-bold text-[#f368e0]" id="stat-compat">—</div>
+                <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">Avg Compatibility</div>
+            </div>
+            <div class="stat-card bg-[#16162d] rounded-2xl p-5 text-center border border-[#ffffff08]">
+                <div class="text-2xl font-bold text-[#feca57]" id="stat-online">—</div>
+                <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">Online Now</div>
+            </div>
+            <div class="stat-card bg-[#16162d] rounded-2xl p-5 text-center border border-[#ffffff08]">
+                <div class="text-2xl font-bold text-[#54a0ff]" id="stat-nearby">—</div>
+                <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">Near You</div>
+            </div>
+        </div>
+
+        <!-- Data Visualization Grid -->
+        <div class="grid md:grid-cols-2 gap-4 mb-8">
+            <!-- Compatibility Circle -->
+            <div class="bg-[#16162d] rounded-2xl p-6 border border-[#ffffff08]">
+                <h3 class="text-sm font-semibold mb-4 text-gray-300">🎯 Compatibility Score</h3>
+                <div class="flex items-center justify-center">
+                    <div class="relative w-44 h-44">
+                        <svg class="w-44 h-44 transform -rotate-90" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#2a2a4a" stroke-width="6"/>
+                            <circle id="compat-circle" cx="50" cy="50" r="45" fill="none" stroke="url(#gradient1)" stroke-width="6"
+                                stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round"
+                                style="transition: stroke-dashoffset 2s ease"/>
+                            <defs>
+                                <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#ff6b6b"/>
+                                    <stop offset="100%" stop-color="#f368e0"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="compat-value" class="text-3xl font-bold">0%</span>
+                            <span class="text-[10px] text-gray-500">match rate</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Age Distribution Bar Chart -->
+            <div class="bg-[#16162d] rounded-2xl p-6 border border-[#ffffff08]">
+                <h3 class="text-sm font-semibold mb-4 text-gray-300">📊 Match Age Distribution</h3>
+                <div class="flex items-end justify-between gap-2 h-36 px-2">
+                    <div class="flex flex-col items-center flex-1">
+                        <div id="bar1" class="w-full rounded-t-lg animated-gradient" style="height:0; transition: height 1.5s ease"></div>
+                        <span class="text-[10px] text-gray-600 mt-2">18-24</span>
+                    </div>
+                    <div class="flex flex-col items-center flex-1">
+                        <div id="bar2" class="w-full rounded-t-lg animated-gradient" style="height:0; transition: height 1.5s ease"></div>
+                        <span class="text-[10px] text-gray-600 mt-2">25-30</span>
+                    </div>
+                    <div class="flex flex-col items-center flex-1">
+                        <div id="bar3" class="w-full rounded-t-lg animated-gradient" style="height:0; transition: height 1.5s ease"></div>
+                        <span class="text-[10px] text-gray-600 mt-2">31-37</span>
+                    </div>
+                    <div class="flex flex-col items-center flex-1">
+                        <div id="bar4" class="w-full rounded-t-lg animated-gradient" style="height:0; transition: height 1.5s ease"></div>
+                        <span class="text-[10px] text-gray-600 mt-2">38-45</span>
+                    </div>
+                    <div class="flex flex-col items-center flex-1">
+                        <div id="bar5" class="w-full rounded-t-lg animated-gradient" style="height:0; transition: height 1.5s ease"></div>
+                        <span class="text-[10px] text-gray-600 mt-2">46+</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interest Breakdown -->
+            <div class="bg-[#16162d] rounded-2xl p-6 border border-[#ffffff08]">
+                <h3 class="text-sm font-semibold mb-4 text-gray-300">💬 Common Interests</h3>
+                <div class="space-y-3" id="interest-bars">
+                    <div>
+                        <div class="flex justify-between text-xs mb-1"><span class="text-gray-400">Travel & Adventure</span><span class="text-[#ff6b6b]" id="int1-val">0%</span></div>
+                        <div class="w-full bg-[#2a2a4a] rounded-full h-2"><div id="int1-bar" class="h-full rounded-full bg-gradient-to-r from-[#ff6b6b] to-[#f368e0]" style="width:0; transition: width 2s ease"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1"><span class="text-gray-400">Music & Movies</span><span class="text-[#ff6b6b]" id="int2-val">0%</span></div>
+                        <div class="w-full bg-[#2a2a4a] rounded-full h-2"><div id="int2-bar" class="h-full rounded-full bg-gradient-to-r from-[#f368e0] to-[#feca57]" style="width:0; transition: width 2s ease"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1"><span class="text-gray-400">Fitness & Health</span><span class="text-[#ff6b6b]" id="int3-val">0%</span></div>
+                        <div class="w-full bg-[#2a2a4a] rounded-full h-2"><div id="int3-bar" class="h-full rounded-full bg-gradient-to-r from-[#feca57] to-[#54a0ff]" style="width:0; transition: width 2s ease"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1"><span class="text-gray-400">Food & Cooking</span><span class="text-[#ff6b6b]" id="int4-val">0%</span></div>
+                        <div class="w-full bg-[#2a2a4a] rounded-full h-2"><div id="int4-bar" class="h-full rounded-full bg-gradient-to-r from-[#54a0ff] to-[#5f27cd]" style="width:0; transition: width 2s ease"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1"><span class="text-gray-400">Reading & Art</span><span class="text-[#ff6b6b]" id="int5-val">0%</span></div>
+                        <div class="w-full bg-[#2a2a4a] rounded-full h-2"><div id="int5-bar" class="h-full rounded-full bg-gradient-to-r from-[#5f27cd] to-[#ff6b6b]" style="width:0; transition: width 2s ease"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Summary -->
+            <div class="bg-[#16162d] rounded-2xl p-6 border border-[#ffffff08]">
+                <h3 class="text-sm font-semibold mb-4 text-gray-300">👤 Your Profile Summary</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between bg-[#1e1e3a] rounded-xl px-4 py-3">
+                        <span class="text-xs text-gray-500">Age</span>
+                        <span class="text-sm font-semibold" id="sum-age">—</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-[#1e1e3a] rounded-xl px-4 py-3">
+                        <span class="text-xs text-gray-500">Gender</span>
+                        <span class="text-sm font-semibold" id="sum-gender">—</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-[#1e1e3a] rounded-xl px-4 py-3">
+                        <span class="text-xs text-gray-500">Interested In</span>
+                        <span class="text-sm font-semibold" id="sum-interest">—</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-[#1e1e3a] rounded-xl px-4 py-3">
+                        <span class="text-xs text-gray-500">Status</span>
+                        <span class="text-sm font-semibold text-green-400">✓ Profile Active</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Button — Adsterra Smartlink -->
+        <div class="text-center mb-8">
+            <a id="smartlink-btn" href="#" target="_blank" rel="noopener noreferrer"
+                class="inline-block px-10 py-5 animated-gradient rounded-2xl text-white font-bold text-lg hover:opacity-90 transition active:scale-95 shadow-lg shadow-[#ff6b6b30]">
+                💘 View My Matches Now — It's Free!
+            </a>
+            <p class="text-[10px] text-gray-600 mt-3">Free registration required to view profiles</p>
+        </div>
+
+        <!-- Secondary CTA with Smartlink -->
+        <div class="bg-gradient-to-r from-[#1a1a3e] to-[#2a1a3e] rounded-2xl p-6 border border-[#ff6b6b20] text-center mb-8">
+            <p class="text-lg font-bold mb-1">🔥 <span id="urgency-count">47</span> people in your area are looking right now!</p>
+            <p class="text-xs text-gray-500 mb-4">Don't miss your chance — profiles are filling up fast</p>
+            <a id="smartlink-btn-2" href="#" target="_blank" rel="noopener noreferrer"
+                class="inline-block px-8 py-3 bg-white text-[#0f0f23] rounded-xl font-bold text-sm hover:bg-gray-200 transition">
+                Start Matching →
+            </a>
+        </div>
+    </section>
+
+    <!-- ==================== BOTTOM AD BANNER ==================== -->
+    <div class="max-w-4xl mx-auto px-4 pb-10">
+        <div id="ad-banner-bottom" class="ad-banner rounded-xl h-[100px] flex items-center justify-center">
+            <div class="text-center z-10 relative">
+                <p class="text-xs text-gray-500 uppercase tracking-widest">Advertisement</p>
+                <p class="text-[10px] text-gray-600 mt-1">— Ad Banner 728×90 —</p>
+                <!-- ADSTERRA AD CODE GOES HERE -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== SOCIAL PROOF / TESTIMONIALS ==================== -->
+    <section class="max-w-4xl mx-auto px-6 pb-16">
+        <h3 class="text-center text-sm font-semibold text-gray-500 uppercase tracking-widest mb-8">Real Success Stories</h3>
+        <div class="grid sm:grid-cols-3 gap-4">
+            <div class="bg-[#16162d] rounded-2xl p-5 border border-[#ffffff08]">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-red-400 flex items-center justify-center text-sm">JM</div>
+                    <div>
+                        <p class="text-sm font-semibold">Jessica & Mike</p>
+                        <p class="text-[10px] text-gray-600">Matched 6 months ago</p>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-400 leading-relaxed">"We never expected to find each other online. LoveSpark's algorithm knew what we needed before we did! 💕"</p>
+                <div class="text-yellow-400 text-xs mt-2">★★★★★</div>
+            </div>
+            <div class="bg-[#16162d] rounded-2xl p-5 border border-[#ffffff08]">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center text-sm">SA</div>
+                    <div>
+                        <p class="text-sm font-semibold">Sarah & Alex</p>
+                        <p class="text-[10px] text-gray-600">Engaged!</p>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-400 leading-relaxed">"From our first chat to our engagement — all thanks to this amazing platform. It truly works! 💍"</p>
+                <div class="text-yellow-400 text-xs mt-2">★★★★★</div>
+            </div>
+            <div class="bg-[#16162d] rounded-2xl p-5 border border-[#ffffff08]">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-teal-400 flex items-center justify-center text-sm">DL</div>
+                    <div>
+                        <p class="text-sm font-semibold">David & Lisa</p>
+                        <p class="text-[10px] text-gray-600">Married!</p>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-400 leading-relaxed">"Best decision I ever made was clicking that 'Find Soulmate' button. Now we're happily married! 🥂"</p>
+                <div class="text-yellow-400 text-xs mt-2">★★★★★</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="border-t border-[#ffffff08] py-8 px-6">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <span class="text-lg">💘</span>
+                <span class="text-sm font-bold">Love<span class="text-[#ff6b6b]">Spark</span></span>
+            </div>
+            <div class="flex items-center gap-6 text-xs text-gray-600">
+                <a href="#" class="hover:text-gray-400 transition">Privacy</a>
+                <a href="#" class="hover:text-gray-400 transition">Terms</a>
+                <a href="#" class="hover:text-gray-400 transition">Contact</a>
+                <a href="#" class="hover:text-gray-400 transition">DMCA</a>
+            </div>
+            <p class="text-[10px] text-gray-700">© 2025 LoveSpark. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ==================== FLOATING HEARTS CONTAINER ==================== -->
+    <div id="hearts-container" class="fixed inset-0 pointer-events-none z-50 overflow-hidden"></div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // ---- State ----
+        let userData = { age: 25, gender: '', interest: '' };
+        let currentStep = 1;
+
+        // ---- Age Controls ----
+        function updateAge(val) {
+            val = Math.max(18, Math.min(65, parseInt(val)));
+            userData.age = val;
+            document.getElementById('age-display').textContent = val;
+            document.getElementById('age-range').value = val;
+        }
+
+        function adjustAge(delta) {
+            updateAge(userData.age + delta);
+        }
+
+        // ---- Gender Selection ----
+        function selectGender(gender, el) {
+            userData.gender = gender;
+            document.querySelectorAll('.gender-option').forEach(e => e.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('step2-next').disabled = false;
+        }
+
+        // ---- Interest Selection ----
+        function selectInterest(interest, el) {
+            userData.interest = interest;
+            document.querySelectorAll('.interest-option').forEach(e => e.classList.remove('active'));
+            el.classList.add('active');
+            updateFindBtn();
+        }
+
+        function updateFindBtn() {
+            const terms = document.getElementById('terms').checked;
+            document.getElementById('find-btn').disabled = !(userData.interest && terms);
+        }
+
+        document.getElementById('terms').addEventListener('change', updateFindBtn);
+
+        // ---- Step Navigation ----
+        function goToStep(step) {
+            document.querySelectorAll('#step1, #step2, #step3').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`step${step}`).classList.remove('hidden');
+            document.getElementById(`step${step}`).classList.add('fade-in-up');
+
+            // Update dots
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById(`step${i}-dot`).style.background = i <= step ? '#ff6b6b' : '#2a2a4a';
+            }
+            currentStep = step;
+        }
+
+        // ---- Find Soulmate ----
+        function findSoulmate() {
+            if (!userData.interest) return;
+
+            // Hide form, show loading
+            document.getElementById('form-section').classList.add('hidden');
+            document.getElementById('loading-section').classList.remove('hidden');
+            document.getElementById('loading-section').scrollIntoView({ behavior: 'smooth' });
+
+            // Spawn floating hearts
+            spawnHearts();
+
+            // Animate progress
+            let progress = 0;
+            const loadingTexts = [
+                { at: 10, emoji: '🔍', text: 'Scanning profiles...', sub: 'Checking compatibility algorithms' },
+                { at: 30, emoji: '🧠', text: 'AI Analysis in progress...', sub: 'Matching personality traits' },
+                { at: 55, emoji: '📊', text: 'Building your match data...', sub: 'Calculating compatibility scores' },
+                { at: 75, emoji: '💕', text: 'Found potential matches!', sub: 'Ranking by compatibility percentage' },
+                { at: 90, emoji: '✨', text: 'Preparing your results...', sub: 'Almost there!' },
+            ];
+
+            const interval = setInterval(() => {
+                progress += Math.random() * 3 + 1;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    setTimeout(showResults, 600);
+                }
+                document.getElementById('progress-bar').style.width = progress + '%';
+                document.getElementById('progress-text').textContent = Math.floor(progress) + '%';
+
+                const lt = loadingTexts.find(l => progress >= l.at && progress < l.at + 10);
+                if (lt) {
+                    document.getElementById('loading-emoji').textContent = lt.emoji;
+                    document.getElementById('loading-text').textContent = lt.text;
+                    document.getElementById('loading-sub').textContent = lt.sub;
+                }
+            }, 120);
+        }
+
+        // ---- Show Results ----
+        function showResults() {
+            document.getElementById('loading-section').classList.add('hidden');
+            document.getElementById('results-section').classList.remove('hidden');
+            document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+
+            // Generate fake but realistic data based on user input
+            const age = userData.age;
+            const matchCount = Math.floor(Math.random() * 300) + 150;
+            const compatPct = Math.floor(Math.random() * 15) + 82;
+            const onlineNow = Math.floor(Math.random() * 80) + 40;
+            const nearby = Math.floor(Math.random() * 50) + 20;
+
+            // Animate stat counters
+            animateCounter('stat-matches', matchCount);
+            animateCounter('stat-compat', compatPct, '%');
+            animateCounter('stat-online', onlineNow);
+            animateCounter('stat-nearby', nearby);
+
+            // Compatibility circle
+            setTimeout(() => {
+                const offset = 283 - (283 * compatPct / 100);
+                document.getElementById('compat-circle').style.strokeDashoffset = offset;
+                animateCounter('compat-value', compatPct, '%');
+            }, 400);
+
+            // Bar chart — distribute around user's age
+            setTimeout(() => {
+                const bars = generateAgeDistribution(age);
+                document.getElementById('bar1').style.height = bars[0] + '%';
+                document.getElementById('bar2').style.height = bars[1] + '%';
+                document.getElementById('bar3').style.height = bars[2] + '%';
+                document.getElementById('bar4').style.height = bars[3] + '%';
+                document.getElementById('bar5').style.height = bars[4] + '%';
+            }, 600);
+
+            // Interest bars
+            setTimeout(() => {
+                const ints = [
+                    Math.floor(Math.random() * 25) + 70,
+                    Math.floor(Math.random() * 25) + 55,
+                    Math.floor(Math.random() * 25) + 50,
+                    Math.floor(Math.random() * 25) + 40,
+                    Math.floor(Math.random() * 25) + 30
+                ];
+                for (let i = 1; i <= 5; i++) {
+                    document.getElementById(`int${i}-bar`).style.width = ints[i-1] + '%';
+                    document.getElementById(`int${i}-val`).textContent = ints[i-1] + '%';
+                }
+            }, 800);
+
+            // Profile summary
+            document.getElementById('sum-age').textContent = age + ' years old';
+            document.getElementById('sum-gender').textContent = userData.gender;
+            document.getElementById('sum-interest').textContent = userData.interest;
+
+            // Urgency counter
+            document.getElementById('urgency-count').textContent = Math.floor(Math.random() * 40) + 30;
+        }
+
+        // ---- Helpers ----
+        function animateCounter(id, target, suffix = '') {
+            const el = document.getElementById(id);
+            let current = 0;
+            const step = Math.max(1, Math.floor(target / 40));
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                el.textContent = current + suffix;
+            }, 40);
+        }
+
+        function generateAgeDistribution(userAge) {
+            const ranges = [[18,24],[25,30],[31,37],[38,45],[46,65]];
+            let bars = ranges.map(r => {
+                const mid = (r[0] + r[1]) / 2;
+                const dist = Math.abs(userAge - mid);
+                return Math.max(10, 100 - dist * 4 + Math.random() * 15);
+            });
+            // Normalize to max 100
+            const max = Math.max(...bars);
+            return bars.map(b => Math.round(b / max * 100));
+        }
+
+        function spawnHearts() {
+            const container = document.getElementById('hearts-container');
+            const hearts = ['❤️', '💕', '💘', '💖', '💗', '💝'];
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('span');
+                    heart.className = 'float-heart text-2xl';
+                    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.top = Math.random() * 100 + 'vh';
+                    container.appendChild(heart);
+                    setTimeout(() => heart.remove(), 2500);
+                }, i * 150);
+            }
+        }
+
+        // ---- Replace these with your Adsterra Smartlink URL ----
+        const SMARTLINK_URL = 'https://www.example.com/your-adsterra-smartlink';
+        document.getElementById('smartlink-btn').href = SMARTLINK_URL;
+        document.getElementById('smartlink-btn-2').href = SMARTLINK_URL;
+    </script>
+
+</body>
+</html>
