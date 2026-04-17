@@ -4,523 +4,692 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LoveSpark — Find Your Soulmate Today</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <!-- Adsterra Popunder -->
-    <script src="https://flaskledgeheadquarters.com/3a/cd/d2/3acdd266ad030e4a7cbdc65a3141fb9c.js"></script>
-    <!-- Adsterra Social Bar -->
-    <script src="https://flaskledgeheadquarters.com/11/36/e8/1136e8b725b254e0ed94febe7bcbde48.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rose: { 400: '#fb7185', 500: '#f43f5e', 600: '#e11d48' },
+                        pink: { 400: '#f472b6', 500: '#ec4899', 600: '#db2777' },
+                        fuchsia: { 400: '#e879f9', 500: '#d946ef' },
+                        plum: { 900: '#1a0a1a', 800: '#2d1a2d', 700: '#3d2a3d' }
+                    },
+                    fontFamily: {
+                        playfair: ['Playfair Display', 'serif'],
+                        dancing: ['Dancing Script', 'cursive'],
+                        inter: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         * { font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(135deg, #1a0a1a 0%, #2d1a2d 25%, #1a0a2a 50%, #2a1a1a 75%, #1a0a1a 100%);
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse 80% 50% at 50% 0%, rgba(251, 113, 133, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 20% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(217, 70, 239, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
         .font-playfair { font-family: 'Playfair Display', serif; }
+        .font-dancing { font-family: 'Dancing Script', cursive; }
+
+        /* Gradient Button */
         .btn-gradient {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24, #f368e0);
+            background: linear-gradient(135deg, #f43f5e, #ec4899, #d946ef, #f43f5e);
+            background-size: 300% 300%;
+            animation: gradientShift 4s ease infinite;
         }
-        @keyframes pulseRing {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(1.4); opacity: 0; }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
-        .pulse-ring::before {
+
+        /* Glow Card */
+        .glow-card {
+            background: rgba(45, 26, 45, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(251, 113, 133, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        /* Pulse Ring */
+        .pulse-ring {
+            position: relative;
+        }
+        .pulse-ring::before, .pulse-ring::after {
             content: '';
             position: absolute;
             inset: -4px;
             border-radius: 9999px;
-            border: 2px solid #ff6b6b;
+            border: 2px solid #f43f5e;
             animation: pulseRing 2s ease-out infinite;
         }
-        @keyframes floatHeart {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-120px) scale(0.5); opacity: 0; }
+        .pulse-ring::after {
+            animation-delay: 1s;
+        }
+        @keyframes pulseRing {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        /* Heartbeat */
+        .heartbeat {
+            animation: heartbeat 1.2s ease-in-out infinite;
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.15); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.1); }
+            56% { transform: scale(1); }
+        }
+
+        /* Floating Hearts */
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg) scale(0.3); opacity: 0; }
         }
         .float-heart {
-            animation: floatHeart 2s ease-out forwards;
-            position: absolute;
+            position: fixed;
             pointer-events: none;
+            z-index: 100;
+            animation: floatUp linear forwards;
         }
+
+        /* Ambient Hearts */
+        @keyframes ambientFloat {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+        .ambient-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.5;
+            animation: ambientFloat linear infinite;
+        }
+
+        /* Shimmer Text */
+        .shimmer-text {
+            background: linear-gradient(90deg, #fb7185, #f472b6, #e879f9, #fb7185);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* Fade In Up */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .fade-in-up { animation: fadeInUp 0.6s ease forwards; }
+
+        /* Loading Dots */
         @keyframes loadDot {
             0%, 80%, 100% { transform: scale(0); }
             40% { transform: scale(1); }
         }
+        .load-dot { animation: loadDot 1.4s infinite ease-in-out both; }
         .load-dot:nth-child(1) { animation-delay: 0s; }
         .load-dot:nth-child(2) { animation-delay: 0.2s; }
         .load-dot:nth-child(3) { animation-delay: 0.4s; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #1a1a2e; }
-        ::-webkit-scrollbar-thumb { background: #ff6b6b; border-radius: 3px; }
-        .ad-slot {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+
+        /* Rotating Glow */
+        .rotating-glow {
+            position: relative;
         }
-        .gender-option, .interest-option {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .gender-option:hover, .interest-option:hover {
-            border-color: #ff6b6b !important;
-            transform: translateY(-2px);
-        }
-        .gender-option.active, .interest-option.active {
-            border-color: #ff6b6b !important;
-            background: rgba(255, 107, 107, 0.1) !important;
-            box-shadow: 0 0 20px rgba(255, 107, 107, 0.2);
-        }
-        .stat-card { transition: all 0.3s ease; }
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 40px rgba(255, 107, 107, 0.15);
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 20px;
-            width: 20px;
+        .rotating-glow::before {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            background: conic-gradient(from 0deg, transparent, #f43f5e, transparent, #ec4899, transparent);
             border-radius: 50%;
-            background: #ff6b6b;
-            cursor: pointer;
-            border: 3px solid #0f0f23;
-            box-shadow: 0 0 10px rgba(255,107,107,0.4);
+            animation: rotateGlow 3s linear infinite;
+            opacity: 0.3;
+            filter: blur(15px);
         }
-        input[type="range"]::-moz-range-thumb {
-            height: 20px;
-            width: 20px;
-            border-radius: 50%;
-            background: #ff6b6b;
-            cursor: pointer;
-            border: 3px solid #0f0f23;
+        @keyframes rotateGlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
+
+        /* Blink */
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.4; }
         }
         .online-dot { animation: blink 2s ease-in-out infinite; }
+
+        /* Gender/Interest Options */
+        .gender-option, .interest-option {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .gender-option:hover, .interest-option:hover {
+            border-color: #f43f5e !important;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(244, 63, 94, 0.2);
+        }
+        .gender-option.active, .interest-option.active {
+            border-color: #f43f5e !important;
+            background: rgba(244, 63, 94, 0.15) !important;
+            box-shadow: 0 0 30px rgba(244, 63, 94, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Stat Card */
+        .stat-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 50px rgba(244, 63, 94, 0.2);
+        }
+
+        /* Range Input */
+        input[type="range"] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type="range"]::-webkit-slider-track {
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #3d2a3d, #4d3a4d);
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f43f5e, #ec4899);
+            cursor: pointer;
+            border: 3px solid #1a0a1a;
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.5);
+            margin-top: -9px;
+        }
+        input[type="range"]::-moz-range-thumb {
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f43f5e, #ec4899);
+            cursor: pointer;
+            border: 3px solid #1a0a1a;
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.5);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a0a1a; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #f43f5e, #ec4899); border-radius: 4px; }
+
+        /* Progress Bar Glow */
+        .progress-glow {
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.5);
+        }
     </style>
 </head>
-<body class="bg-[#0f0f23] text-white min-h-screen">
-    <!-- ==================== TOP AD — 728x90 Banner ==================== -->
-    <div class="w-full bg-[#0a0a1a] py-2">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="ad-slot rounded-lg min-h-[90px]">
-                <script>
-                  atOptions = {
-                    'key' : '493a5692f63e66ebcfa2cc7c073ce40e',
-                    'format' : 'iframe',
-                    'height' : 90,
-                    'width' : 728,
-                    'params' : {}
-                  };
-                </script>
-                <script src="https://flaskledgeheadquarters.com/493a5692f63e66ebcfa2cc7c073ce40e/invoke.js"></script>
-            </div>
-        </div>
-    </div>
+<body class="text-white min-h-screen overflow-x-hidden">
+    <!-- Ambient Hearts Container -->
+    <div id="ambient-hearts"></div>
+
+    <!-- Floating Hearts Container (for burst effect) -->
+    <div id="hearts-container"></div>
+
     <!-- ==================== NAVBAR ==================== -->
-    <nav class="w-full py-5 px-6 flex items-center justify-between max-w-6xl mx-auto">
-        <div class="flex items-center gap-2">
-            <div class="w-9 h-9 btn-gradient rounded-xl flex items-center justify-center text-lg">💘</div>
-            <span class="text-xl font-bold tracking-tight">Love<span class="text-[#ff6b6b]">Spark</span></span>
+    <nav class="relative z-10 w-full py-6 px-6 flex items-center justify-between max-w-6xl mx-auto">
+        <div class="flex items-center gap-3">
+            <div class="w-11 h-11 btn-gradient rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-rose-500/30">
+                <span class="heartbeat">💘</span>
+            </div>
+            <span class="text-2xl font-bold tracking-tight">Love<span class="text-rose-400">Spark</span></span>
         </div>
         <div class="hidden md:flex items-center gap-8 text-sm text-gray-400">
-            <a href="#" class="hover:text-white transition">How It Works</a>
-            <a href="#" class="hover:text-white transition">Success Stories</a>
-            <a href="#" class="hover:text-white transition">Safety</a>
+            <a href="#" class="hover:text-rose-400 transition-colors duration-300">How It Works</a>
+            <a href="#" class="hover:text-rose-400 transition-colors duration-300">Success Stories</a>
+            <a href="#" class="hover:text-rose-400 transition-colors duration-300">Safety</a>
         </div>
-        <div class="flex items-center gap-2">
-            <span class="online-dot inline-block w-2 h-2 rounded-full bg-green-400"></span>
-            <span class="text-xs text-gray-400" id="visitor-count">12,847 online</span>
+        <div class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+            <span class="online-dot inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/50"></span>
+            <span class="text-xs text-gray-300" id="visitor-count">12,847 online</span>
         </div>
     </nav>
+
     <!-- ==================== HERO SECTION ==================== -->
-    <section class="max-w-6xl mx-auto px-6 pt-10 pb-16 text-center">
-        <div class="inline-block px-4 py-1.5 bg-[#1a1a3e] rounded-full text-xs text-[#ff6b6b] font-medium mb-6 border border-[#ff6b6b20]">
-            ✨ #1 Trusted Matchmaking Platform — 2M+ Happy Couples
+    <section class="relative z-10 max-w-6xl mx-auto px-6 pt-10 pb-16 text-center">
+        <div class="inline-flex items-center gap-2 px-5 py-2 bg-rose-500/10 rounded-full text-sm text-rose-300 font-medium mb-8 border border-rose-500/20 backdrop-blur-sm">
+            <span class="heartbeat">✨</span>
+            <span>#1 Trusted Matchmaking Platform — 2M+ Happy Couples</span>
         </div>
-        <h1 class="font-playfair text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
-            Find Your Perfect<br>Soulmate
+        <h1 class="font-playfair text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-tight mb-8">
+            Find Your <span class="shimmer-text">Perfect</span><br>
+            <span class="font-dancing text-rose-400">Soulmate</span>
         </h1>
-        <p class="text-gray-400 text-base sm:text-lg max-w-xl mx-auto mb-10 leading-relaxed">
-            Answer three simple questions and our AI-powered algorithm will analyze millions of profiles to find your ideal match.
+        <p class="text-gray-400 text-lg sm:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
+            Answer three simple questions and our <span class="text-rose-300">AI-powered algorithm</span> will analyze millions of profiles to find your ideal match.
         </p>
         <!-- Trust badges -->
-        <div class="flex flex-wrap items-center justify-center gap-6 mb-12 text-xs text-gray-500">
-            <span class="flex items-center gap-1.5"><span class="text-green-400">🔒</span> 256-bit Encrypted</span>
-            <span class="flex items-center gap-1.5"><span class="text-yellow-400">⭐</span> 4.9/5 Rating</span>
-            <span class="flex items-center gap-1.5"><span class="text-blue-400">✓</span> Verified Profiles</span>
-            <span class="flex items-center gap-1.5"><span class="text-pink-400">❤️</span> 98% Match Rate</span>
+        <div class="flex flex-wrap items-center justify-center gap-6 mb-12">
+            <div class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+                <span class="text-emerald-400">🔒</span>
+                <span class="text-xs text-gray-400">256-bit Encrypted</span>
+            </div>
+            <div class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+                <span class="text-amber-400">⭐</span>
+                <span class="text-xs text-gray-400">4.9/5 Rating</span>
+            </div>
+            <div class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+                <span class="text-blue-400">✓</span>
+                <span class="text-xs text-gray-400">Verified Profiles</span>
+            </div>
+            <div class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+                <span class="text-pink-400 heartbeat">❤️</span>
+                <span class="text-xs text-gray-400">98% Match Rate</span>
+            </div>
         </div>
     </section>
-    <!-- ==================== AD — 320x50 Banner (Mobile-friendly, above form) ==================== -->
-    <div class="max-w-2xl mx-auto px-6 pb-6">
-        <div class="ad-slot rounded-lg min-h-[50px]">
-            <script>
-              atOptions = {
-                'key' : 'f50daad12caf62fdc343a7cde6fcddff',
-                'format' : 'iframe',
-                'height' : 50,
-                'width' : 320,
-                'params' : {}
-              };
-            </script>
-            <script src="https://flaskledgeheadquarters.com/f50daad12caf62fdc343a7cde6fcddff/invoke.js"></script>
-        </div>
-    </div>
+
     <!-- ==================== FORM SECTION ==================== -->
-    <section id="form-section" class="max-w-2xl mx-auto px-6 pb-16">
-        <div class="bg-[#16162d] rounded-3xl p-6 sm:p-10 border border-[#ffffff08] shadow-2xl shadow-black/30">
-            <div class="text-center mb-8">
-                <h2 class="text-2xl font-bold mb-2">Tell Us About You</h2>
-                <p class="text-sm text-gray-500">It only takes 30 seconds</p>
+    <section id="form-section" class="relative z-10 max-w-2xl mx-auto px-6 pb-20">
+        <div class="glow-card rounded-3xl p-8 sm:p-12">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold mb-3 font-playfair">Tell Us About <span class="shimmer-text">You</span></h2>
+                <p class="text-sm text-gray-500">It only takes 30 seconds 💕</p>
             </div>
             <!-- Step indicator -->
-            <div class="flex items-center justify-center gap-2 mb-10">
-                <div id="step1-dot" class="w-10 h-1.5 rounded-full bg-[#ff6b6b] transition-all duration-500"></div>
-                <div id="step2-dot" class="w-10 h-1.5 rounded-full bg-[#2a2a4a] transition-all duration-500"></div>
-                <div id="step3-dot" class="w-10 h-1.5 rounded-full bg-[#2a2a4a] transition-all duration-500"></div>
+            <div class="flex items-center justify-center gap-3 mb-12">
+                <div id="step1-dot" class="w-12 h-2 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 transition-all duration-500 shadow-lg shadow-rose-500/30"></div>
+                <div id="step2-dot" class="w-12 h-2 rounded-full bg-white/10 transition-all duration-500"></div>
+                <div id="step3-dot" class="w-12 h-2 rounded-full bg-white/10 transition-all duration-500"></div>
             </div>
+
             <!-- STEP 1: Age -->
             <div id="step1" class="fade-in-up">
-                <label class="block text-sm font-medium text-gray-400 mb-4 text-center uppercase tracking-wider">Step 1 — Your Age</label>
-                <div class="flex items-center justify-center gap-6 mb-6">
-                    <button onclick="adjustAge(-1)" class="w-12 h-12 rounded-2xl bg-[#1e1e3a] border border-[#ffffff10] flex items-center justify-center text-xl hover:border-[#ff6b6b] transition active:scale-90">−</button>
+                <label class="block text-sm font-medium text-gray-400 mb-6 text-center uppercase tracking-widest">Step 1 — Your Age</label>
+                <div class="flex items-center justify-center gap-8 mb-8">
+                    <button onclick="adjustAge(-1)" class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-2xl hover:border-rose-500 hover:bg-rose-500/10 transition-all duration-300 active:scale-90">−</button>
                     <div class="text-center">
-                        <span id="age-display" class="text-6xl font-bold text-white">25</span>
-                        <p class="text-xs text-gray-600 mt-1">years old</p>
+                        <span id="age-display" class="text-7xl font-bold bg-gradient-to-b from-white to-gray-400 bg-clip-text text-transparent">25</span>
+                        <p class="text-xs text-gray-600 mt-2">years old</p>
                     </div>
-                    <button onclick="adjustAge(1)" class="w-12 h-12 rounded-2xl bg-[#1e1e3a] border border-[#ffffff10] flex items-center justify-center text-xl hover:border-[#ff6b6b] transition active:scale-90">+</button>
+                    <button onclick="adjustAge(1)" class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-2xl hover:border-rose-500 hover:bg-rose-500/10 transition-all duration-300 active:scale-90">+</button>
                 </div>
                 <input id="age-range" type="range" min="18" max="65" value="25" oninput="updateAge(this.value)"
-                    class="w-full h-1.5 bg-[#2a2a4a] rounded-full appearance-none cursor-pointer mb-8">
-                <div class="flex justify-between text-[10px] text-gray-600 -mt-6 mb-8 px-1">
+                    class="w-full h-2 rounded-full cursor-pointer mb-10">
+                <div class="flex justify-between text-xs text-gray-600 -mt-8 mb-10 px-1">
                     <span>18</span><span>30</span><span>40</span><span>50</span><span>65</span>
                 </div>
-                <button onclick="goToStep(2)" class="w-full py-4 rounded-2xl btn-gradient text-white font-semibold text-sm hover:opacity-90 transition active:scale-[0.98]">
+                <button onclick="goToStep(2)" class="w-full py-5 rounded-2xl btn-gradient text-white font-bold text-base hover:opacity-90 transition-all duration-300 active:scale-[0.98] shadow-lg shadow-rose-500/30">
                     Continue →
                 </button>
             </div>
+
             <!-- STEP 2: Gender -->
             <div id="step2" class="hidden">
-                <label class="block text-sm font-medium text-gray-400 mb-6 text-center uppercase tracking-wider">Step 2 — Your Gender</label>
-                <div class="grid grid-cols-3 gap-3 mb-8">
-                    <div onclick="selectGender('Male', this)" class="gender-option bg-[#1e1e3a] border border-[#ffffff10] rounded-2xl p-5 text-center">
-                        <div class="text-3xl mb-2">👨</div>
-                        <span class="text-sm font-medium">Male</span>
+                <label class="block text-sm font-medium text-gray-400 mb-8 text-center uppercase tracking-widest">Step 2 — Your Gender</label>
+                <div class="grid grid-cols-3 gap-4 mb-10">
+                    <div onclick="selectGender('Male', this)" class="gender-option bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+                        <div class="text-4xl mb-3">👨</div>
+                        <span class="text-sm font-semibold">Male</span>
                     </div>
-                    <div onclick="selectGender('Female', this)" class="gender-option bg-[#1e1e3a] border border-[#ffffff10] rounded-2xl p-5 text-center">
-                        <div class="text-3xl mb-2">👩</div>
-                        <span class="text-sm font-medium">Female</span>
+                    <div onclick="selectGender('Female', this)" class="gender-option bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+                        <div class="text-4xl mb-3">👩</div>
+                        <span class="text-sm font-semibold">Female</span>
                     </div>
-                    <div onclick="selectGender('Other', this)" class="gender-option bg-[#1e1e3a] border border-[#ffffff10] rounded-2xl p-5 text-center">
-                        <div class="text-3xl mb-2">🧑</div>
-                        <span class="text-sm font-medium">Other</span>
+                    <div onclick="selectGender('Other', this)" class="gender-option bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+                        <div class="text-4xl mb-3">🧑</div>
+                        <span class="text-sm font-semibold">Other</span>
                     </div>
                 </div>
-                <div class="flex gap-3">
-                    <button onclick="goToStep(1)" class="w-1/3 py-4 rounded-2xl bg-[#1e1e3a] border border-[#ffffff10] text-gray-400 text-sm hover:border-[#ff6b6b] transition">← Back</button>
-                    <button id="step2-next" onclick="goToStep(3)" disabled class="w-2/3 py-4 rounded-2xl btn-gradient text-white font-semibold text-sm hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]">
+                <div class="flex gap-4">
+                    <button onclick="goToStep(1)" class="w-1/3 py-5 rounded-2xl bg-white/5 border border-white/10 text-gray-400 text-sm font-semibold hover:border-rose-500 hover:text-rose-400 transition-all duration-300">← Back</button>
+                    <button id="step2-next" onclick="goToStep(3)" disabled class="w-2/3 py-5 rounded-2xl btn-gradient text-white font-bold text-base hover:opacity-90 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] shadow-lg shadow-rose-500/30">
                         Continue →
                     </button>
                 </div>
             </div>
+
             <!-- STEP 3: Interest -->
             <div id="step3" class="hidden">
-                <label class="block text-sm font-medium text-gray-400 mb-6 text-center uppercase tracking-wider">Step 3 — Interested In</label>
-                <div class="grid grid-cols-3 gap-3 mb-4">
-                    <div onclick="selectInterest('Men', this)" class="interest-option bg-[#1e1e3a] border border-[#ffffff10] rounded-2xl p-5 text-center">
-                        <div class="text-3xl mb-2">👨</div>
-                        <span class="text-sm font-medium">Men</span>
+                <label class="block text-sm font-medium text-gray-400 mb-8 text-center uppercase tracking-widest">Step 3 — Interested In</label>
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div onclick="selectInterest('Men', this)" class="interest-option bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+                        <div class="text-4xl mb-3">👨</div>
+                        <span class="text-sm font-semibold">Men</span>
                     </div>
-                    <div onclick="selectInterest('Women', this)" class="interest-option bg-[#1e1e3a] border border-[#ffffff10] rounded-2xl p-5 text-center">
-                        <div class="text-3xl mb-2">👩</div>
-                        <span class="text-sm font-medium">Women</span>
+                    <div onclick="selectInterest('Women', this)" class="interest-option bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+                        <div class="text-4xl mb-3">👩</div>
+                        <span class="text-sm font-semibold">Women</span>
                     </div>
-                    <div onclick="selectInterest('Both', this)" class="interest-option bg-[#1e1e3a] border border-[#ffffff10] rounded-2xl p-5 text-center">
-                        <div class="text-3xl mb-2">����</div>
-                        <span class="text-sm font-medium">Both</span>
+                    <div onclick="selectInterest('Both', this)" class="interest-option bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+                        <div class="text-4xl mb-3">💑</div>
+                        <span class="text-sm font-semibold">Both</span>
                     </div>
                 </div>
-                <div class="flex items-center gap-2 my-6 px-1">
-                    <input type="checkbox" id="terms" class="accent-[#ff6b6b] w-4 h-4 rounded">
-                    <label for="terms" class="text-xs text-gray-500">I agree to the <a href="#" class="text-[#ff6b6b] underline">Terms of Service</a> & <a href="#" class="text-[#ff6b6b] underline">Privacy Policy</a></label>
+                <div class="flex items-center gap-3 my-8 px-2">
+                    <input type="checkbox" id="terms" class="w-5 h-5 rounded accent-rose-500">
+                    <label for="terms" class="text-sm text-gray-400">I agree to the <a href="#" class="text-rose-400 underline hover:text-rose-300">Terms of Service</a> & <a href="#" class="text-rose-400 underline hover:text-rose-300">Privacy Policy</a></label>
                 </div>
-                <div class="flex gap-3">
-                    <button onclick="goToStep(2)" class="w-1/3 py-4 rounded-2xl bg-[#1e1e3a] border border-[#ffffff10] text-gray-400 text-sm hover:border-[#ff6b6b] transition">← Back</button>
-                    <button id="find-btn" onclick="findSoulmate()" disabled class="w-2/3 py-4 rounded-2xl btn-gradient text-white font-bold text-sm hover:opacity-90 transition relative pulse-ring disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]">
-                        💘 Find My Soulmate
+                <div class="flex gap-4">
+                    <button onclick="goToStep(2)" class="w-1/3 py-5 rounded-2xl bg-white/5 border border-white/10 text-gray-400 text-sm font-semibold hover:border-rose-500 hover:text-rose-400 transition-all duration-300">← Back</button>
+                    <button id="find-btn" onclick="findSoulmate()" disabled class="w-2/3 py-5 rounded-2xl btn-gradient text-white font-bold text-base hover:opacity-90 transition-all duration-300 relative pulse-ring disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] shadow-lg shadow-rose-500/30">
+                        <span class="heartbeat inline-block mr-2">💘</span> Find My Soulmate
                     </button>
                 </div>
             </div>
         </div>
     </section>
-    <!-- ==================== AD — Native Banner (between form & results) ==================== -->
-    <div class="max-w-4xl mx-auto px-4 pb-10">
-        <div class="ad-slot rounded-xl">
-            <script async="async" data-cfasync="false" src="https://flaskledgeheadquarters.com/9d81d3c59ca9b44b4a7ff85d7845d6df/invoke.js"></script>
-            <div id="container-9d81d3c59ca9b44b4a7ff85d7845d6df"></div>
-        </div>
-    </div>
+
     <!-- ==================== LOADING SECTION ==================== -->
-    <section id="loading-section" class="hidden max-w-2xl mx-auto px-6 pb-16 text-center">
-        <div class="bg-[#16162d] rounded-3xl p-10 border border-[#ffffff08]">
-            <div class="mb-6">
-                <div class="text-5xl mb-4" id="loading-emoji">💘</div>
-                <h2 class="text-xl font-bold mb-2" id="loading-text">Analyzing Your Profile...</h2>
+    <section id="loading-section" class="hidden relative z-10 max-w-2xl mx-auto px-6 pb-20 text-center">
+        <div class="glow-card rounded-3xl p-12">
+            <div class="mb-8">
+                <div class="rotating-glow inline-block">
+                    <div class="text-6xl mb-6" id="loading-emoji">💘</div>
+                </div>
+                <h2 class="text-2xl font-bold mb-3 font-playfair" id="loading-text">Analyzing Your Profile...</h2>
                 <p class="text-sm text-gray-500" id="loading-sub">Scanning 2,847,392 profiles near you</p>
             </div>
-            <div class="w-full bg-[#2a2a4a] rounded-full h-2 mb-4 overflow-hidden">
-                <div id="progress-bar" class="h-full rounded-full btn-gradient transition-all duration-500" style="width: 0%"></div>
+            <div class="w-full bg-white/10 rounded-full h-3 mb-4 overflow-hidden">
+                <div id="progress-bar" class="h-full rounded-full btn-gradient progress-glow transition-all duration-300" style="width: 0%"></div>
             </div>
-            <p id="progress-text" class="text-xs text-gray-600">0%</p>
-            <div class="flex justify-center gap-2 mt-6">
-                <div class="load-dot w-2.5 h-2.5 bg-[#ff6b6b] rounded-full" style="animation: loadDot 1.4s infinite ease-in-out both;"></div>
-                <div class="load-dot w-2.5 h-2.5 bg-[#ff6b6b] rounded-full" style="animation: loadDot 1.4s infinite ease-in-out both;"></div>
-                <div class="load-dot w-2.5 h-2.5 bg-[#ff6b6b] rounded-full" style="animation: loadDot 1.4s infinite ease-in-out both;"></div>
+            <p id="progress-text" class="text-sm text-gray-400 font-semibold">0%</p>
+            <div class="flex justify-center gap-3 mt-8">
+                <div class="load-dot w-3 h-3 bg-rose-500 rounded-full shadow-lg shadow-rose-500/50"></div>
+                <div class="load-dot w-3 h-3 bg-pink-500 rounded-full shadow-lg shadow-pink-500/50"></div>
+                <div class="load-dot w-3 h-3 bg-fuchsia-500 rounded-full shadow-lg shadow-fuchsia-500/50"></div>
             </div>
         </div>
     </section>
-    <!-- ==================== RESULTS / VISUALIZATION ==================== -->
-    <section id="results-section" class="hidden max-w-4xl mx-auto px-6 pb-16">
-        <div class="text-center mb-10 fade-in-up">
-            <div class="text-5xl mb-4">🎉</div>
-            <h2 class="text-3xl sm:text-4xl font-bold mb-2 font-playfair">Great News!</h2>
-            <p class="text-gray-400 text-sm">We found potential matches based on your preferences</p>
+
+    <!-- ==================== RESULTS SECTION ==================== -->
+    <section id="results-section" class="hidden relative z-10 max-w-4xl mx-auto px-6 pb-20">
+        <div class="text-center mb-12 fade-in-up">
+            <div class="text-6xl mb-6 heartbeat">🎉</div>
+            <h2 class="text-4xl sm:text-5xl font-bold mb-4 font-playfair">Great <span class="shimmer-text">News!</span></h2>
+            <p class="text-gray-400 text-lg">We found potential matches based on your preferences</p>
         </div>
+
         <!-- Summary Cards -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-            <div class="stat-card bg-[#16162d] rounded-2xl p-5 text-center border border-[#ffffff08]">
-                <div class="text-2xl font-bold text-[#ff6b6b]" id="stat-matches">—</div>
-                <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">Matches Found</div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+            <div class="stat-card glow-card rounded-2xl p-6 text-center">
+                <div class="text-3xl font-bold text-rose-400" id="stat-matches">—</div>
+                <div class="text-xs text-gray-500 mt-2 uppercase tracking-wider">Matches Found</div>
             </div>
-            <div class="stat-card bg-[#16162d] rounded-2xl p-5 text-center border border-[#ffffff08]">
-                <div class="text-2xl font-bold text-[#f368e0]" id="stat-compat">—</div>
-                <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">Avg Compatibility</div>
+            <div class="stat-card glow-card rounded-2xl p-6 text-center">
+                <div class="text-3xl font-bold text-pink-400" id="stat-compat">—</div>
+                <div class="text-xs text-gray-500 mt-2 uppercase tracking-wider">Avg Compatibility</div>
             </div>
-            <div class="stat-card bg-[#16162d] rounded-2xl p-5 text-center border border-[#ffffff08]">
-                <div class="text-2xl font-bold text-[#feca57]" id="stat-online">—</div>
-                <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">Online Now</div>
+            <div class="stat-card glow-card rounded-2xl p-6 text-center">
+                <div class="text-3xl font-bold text-amber-400" id="stat-online">—</div>
+                <div class="text-xs text-gray-500 mt-2 uppercase tracking-wider">Online Now</div>
             </div>
-            <div class="stat-card bg-[#16162d] rounded-2xl p-5 text-center border border-[#ffffff08]">
-                <div class="text-2xl font-bold text-[#54a0ff]" id="stat-nearby">—</div>
-                <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">Near You</div>
+            <div class="stat-card glow-card rounded-2xl p-6 text-center">
+                <div class="text-3xl font-bold text-blue-400" id="stat-nearby">—</div>
+                <div class="text-xs text-gray-500 mt-2 uppercase tracking-wider">Near You</div>
             </div>
         </div>
+
         <!-- Data Visualization Grid -->
-        <div class="grid md:grid-cols-2 gap-4 mb-8">
+        <div class="grid md:grid-cols-2 gap-6 mb-10">
             <!-- Compatibility Circle -->
-            <div class="bg-[#16162d] rounded-2xl p-6 border border-[#ffffff08]">
-                <h3 class="text-sm font-semibold mb-4 text-gray-300">🎯 Compatibility Score</h3>
+            <div class="glow-card rounded-2xl p-8">
+                <h3 class="text-base font-semibold mb-6 text-gray-300 flex items-center gap-2">
+                    <span class="heartbeat">🎯</span> Compatibility Score
+                </h3>
                 <div class="flex items-center justify-center">
-                    <div class="relative w-44 h-44">
-                        <svg class="w-44 h-44 transform -rotate-90" viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="45" fill="none" stroke="#2a2a4a" stroke-width="6"/>
-                            <circle id="compat-circle" cx="50" cy="50" r="45" fill="none" stroke="#ff6b6b" stroke-width="6"
+                    <div class="relative w-48 h-48">
+                        <svg class="w-48 h-48 transform -rotate-90" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="8"/>
+                            <circle id="compat-circle" cx="50" cy="50" r="45" fill="none" stroke="url(#gradient)" stroke-width="8"
                                 stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round"
-                                style="transition: stroke-dashoffset 2s ease"/>
+                                style="transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1); filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.5))"/>
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#f43f5e"/>
+                                    <stop offset="50%" stop-color="#ec4899"/>
+                                    <stop offset="100%" stop-color="#d946ef"/>
+                                </linearGradient>
+                            </defs>
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center">
-                            <span id="compat-value" class="text-3xl font-bold">0%</span>
-                            <span class="text-[10px] text-gray-500">match rate</span>
+                            <span id="compat-value" class="text-4xl font-bold">0%</span>
+                            <span class="text-xs text-gray-500 mt-1">match rate</span>
                         </div>
                     </div>
                 </div>
             </div>
+
             <!-- Age Distribution Chart -->
-            <div class="bg-[#16162d] rounded-2xl p-6 border border-[#ffffff08]">
-                <h3 class="text-sm font-semibold mb-4 text-gray-300">📊 Match Age Distribution</h3>
-                <div class="flex items-end justify-between gap-2 h-36 px-2">
+            <div class="glow-card rounded-2xl p-8">
+                <h3 class="text-base font-semibold mb-6 text-gray-300 flex items-center gap-2">
+                    <span>📊</span> Match Age Distribution
+                </h3>
+                <div class="flex items-end justify-between gap-3 h-40 px-4">
                     <div class="flex flex-col items-center flex-1">
-                        <div id="bar1" class="w-full rounded-t-lg btn-gradient" style="height:0; transition: height 1.5s ease"></div>
-                        <span class="text-[10px] text-gray-600 mt-2">18-24</span>
+                        <div id="bar1" class="w-full rounded-t-lg bg-gradient-to-t from-rose-500 to-pink-500 shadow-lg shadow-rose-500/30" style="height:0; transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1)"></div>
+                        <span class="text-xs text-gray-500 mt-3">18-24</span>
                     </div>
                     <div class="flex flex-col items-center flex-1">
-                        <div id="bar2" class="w-full rounded-t-lg btn-gradient" style="height:0; transition: height 1.5s ease"></div>
-                        <span class="text-[10px] text-gray-600 mt-2">25-30</span>
+                        <div id="bar2" class="w-full rounded-t-lg bg-gradient-to-t from-pink-500 to-fuchsia-500 shadow-lg shadow-pink-500/30" style="height:0; transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1)"></div>
+                        <span class="text-xs text-gray-500 mt-3">25-30</span>
                     </div>
                     <div class="flex flex-col items-center flex-1">
-                        <div id="bar3" class="w-full rounded-t-lg btn-gradient" style="height:0; transition: height 1.5s ease"></div>
-                        <span class="text-[10px] text-gray-600 mt-2">31-37</span>
+                        <div id="bar3" class="w-full rounded-t-lg bg-gradient-to-t from-fuchsia-500 to-purple-500 shadow-lg shadow-fuchsia-500/30" style="height:0; transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1)"></div>
+                        <span class="text-xs text-gray-500 mt-3">31-37</span>
                     </div>
                     <div class="flex flex-col items-center flex-1">
-                        <div id="bar4" class="w-full rounded-t-lg btn-gradient" style="height:0; transition: height 1.5s ease"></div>
-                        <span class="text-[10px] text-gray-600 mt-2">38-45</span>
+                        <div id="bar4" class="w-full rounded-t-lg bg-gradient-to-t from-purple-500 to-indigo-500 shadow-lg shadow-purple-500/30" style="height:0; transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1)"></div>
+                        <span class="text-xs text-gray-500 mt-3">38-45</span>
                     </div>
                     <div class="flex flex-col items-center flex-1">
-                        <div id="bar5" class="w-full rounded-t-lg btn-gradient" style="height:0; transition: height 1.5s ease"></div>
-                        <span class="text-[10px] text-gray-600 mt-2">46+</span>
+                        <div id="bar5" class="w-full rounded-t-lg bg-gradient-to-t from-indigo-500 to-blue-500 shadow-lg shadow-indigo-500/30" style="height:0; transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1)"></div>
+                        <span class="text-xs text-gray-500 mt-3">46+</span>
                     </div>
                 </div>
             </div>
+
             <!-- Interest Breakdown -->
-            <div class="bg-[#16162d] rounded-2xl p-6 border border-[#ffffff08]">
-                <h3 class="text-sm font-semibold mb-4 text-gray-300">💬 Common Interests</h3>
-                <div class="space-y-3" id="interest-bars">
+            <div class="glow-card rounded-2xl p-8">
+                <h3 class="text-base font-semibold mb-6 text-gray-300 flex items-center gap-2">
+                    <span class="heartbeat">💬</span> Common Interests
+                </h3>
+                <div class="space-y-4">
                     <div>
-                        <div class="flex justify-between text-xs mb-1"><span class="text-gray-400">Travel & Adventure</span><span class="text-[#ff6b6b]" id="int1-val">0%</span></div>
-                        <div class="w-full bg-[#2a2a4a] rounded-full h-2"><div id="int1-bar" class="h-full rounded-full bg-gradient-to-r from-[#ff6b6b] to-[#f368e0]" style="width:0; transition: width 2s ease"></div></div>
+                        <div class="flex justify-between text-sm mb-2"><span class="text-gray-400">Travel & Adventure</span><span class="text-rose-400 font-semibold" id="int1-val">0%</span></div>
+                        <div class="w-full bg-white/10 rounded-full h-2.5"><div id="int1-bar" class="h-full rounded-full bg-gradient-to-r from-rose-500 to-pink-500 shadow-lg shadow-rose-500/30" style="width:0; transition: width 2s cubic-bezier(0.4, 0, 0.2, 1)"></div></div>
                     </div>
                     <div>
-                        <div class="flex justify-between text-xs mb-1"><span class="text-gray-400">Music & Movies</span><span class="text-[#ff6b6b]" id="int2-val">0%</span></div>
-                        <div class="w-full bg-[#2a2a4a] rounded-full h-2"><div id="int2-bar" class="h-full rounded-full bg-gradient-to-r from-[#f368e0] to-[#feca57]" style="width:0; transition: width 2s ease"></div></div>
+                        <div class="flex justify-between text-sm mb-2"><span class="text-gray-400">Music & Movies</span><span class="text-pink-400 font-semibold" id="int2-val">0%</span></div>
+                        <div class="w-full bg-white/10 rounded-full h-2.5"><div id="int2-bar" class="h-full rounded-full bg-gradient-to-r from-pink-500 to-fuchsia-500 shadow-lg shadow-pink-500/30" style="width:0; transition: width 2s cubic-bezier(0.4, 0, 0.2, 1)"></div></div>
                     </div>
                     <div>
-                        <div class="flex justify-between text-xs mb-1"><span class="text-gray-400">Fitness & Health</span><span class="text-[#ff6b6b]" id="int3-val">0%</span></div>
-                        <div class="w-full bg-[#2a2a4a] rounded-full h-2"><div id="int3-bar" class="h-full rounded-full bg-gradient-to-r from-[#feca57] to-[#54a0ff]" style="width:0; transition: width 2s ease"></div></div>
+                        <div class="flex justify-between text-sm mb-2"><span class="text-gray-400">Fitness & Health</span><span class="text-fuchsia-400 font-semibold" id="int3-val">0%</span></div>
+                        <div class="w-full bg-white/10 rounded-full h-2.5"><div id="int3-bar" class="h-full rounded-full bg-gradient-to-r from-fuchsia-500 to-purple-500 shadow-lg shadow-fuchsia-500/30" style="width:0; transition: width 2s cubic-bezier(0.4, 0, 0.2, 1)"></div></div>
                     </div>
                     <div>
-                        <div class="flex justify-between text-xs mb-1"><span class="text-gray-400">Food & Cooking</span><span class="text-[#ff6b6b]" id="int4-val">0%</span></div>
-                        <div class="w-full bg-[#2a2a4a] rounded-full h-2"><div id="int4-bar" class="h-full rounded-full bg-gradient-to-r from-[#54a0ff] to-[#5f27cd]" style="width:0; transition: width 2s ease"></div></div>
+                        <div class="flex justify-between text-sm mb-2"><span class="text-gray-400">Food & Cooking</span><span class="text-purple-400 font-semibold" id="int4-val">0%</span></div>
+                        <div class="w-full bg-white/10 rounded-full h-2.5"><div id="int4-bar" class="h-full rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg shadow-purple-500/30" style="width:0; transition: width 2s cubic-bezier(0.4, 0, 0.2, 1)"></div></div>
                     </div>
                     <div>
-                        <div class="flex justify-between text-xs mb-1"><span class="text-gray-400">Reading & Art</span><span class="text-[#ff6b6b]" id="int5-val">0%</span></div>
-                        <div class="w-full bg-[#2a2a4a] rounded-full h-2"><div id="int5-bar" class="h-full rounded-full bg-gradient-to-r from-[#5f27cd] to-[#ff6b6b]" style="width:0; transition: width 2s ease"></div></div>
+                        <div class="flex justify-between text-sm mb-2"><span class="text-gray-400">Reading & Art</span><span class="text-indigo-400 font-semibold" id="int5-val">0%</span></div>
+                        <div class="w-full bg-white/10 rounded-full h-2.5"><div id="int5-bar" class="h-full rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 shadow-lg shadow-indigo-500/30" style="width:0; transition: width 2s cubic-bezier(0.4, 0, 0.2, 1)"></div></div>
                     </div>
                 </div>
             </div>
+
             <!-- Profile Summary -->
-            <div class="bg-[#16162d] rounded-2xl p-6 border border-[#ffffff08]">
-                <h3 class="text-sm font-semibold mb-4 text-gray-300">👤 Your Profile Summary</h3>
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between bg-[#1e1e3a] rounded-xl px-4 py-3">
-                        <span class="text-xs text-gray-500">Age</span>
-                        <span class="text-sm font-semibold" id="sum-age">—</span>
+            <div class="glow-card rounded-2xl p-8">
+                <h3 class="text-base font-semibold mb-6 text-gray-300 flex items-center gap-2">
+                    <span>👤</span> Your Profile Summary
+                </h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between bg-white/5 rounded-xl px-5 py-4 border border-white/5">
+                        <span class="text-sm text-gray-500">Age</span>
+                        <span class="text-base font-semibold" id="sum-age">—</span>
                     </div>
-                    <div class="flex items-center justify-between bg-[#1e1e3a] rounded-xl px-4 py-3">
-                        <span class="text-xs text-gray-500">Gender</span>
-                        <span class="text-sm font-semibold" id="sum-gender">—</span>
+                    <div class="flex items-center justify-between bg-white/5 rounded-xl px-5 py-4 border border-white/5">
+                        <span class="text-sm text-gray-500">Gender</span>
+                        <span class="text-base font-semibold" id="sum-gender">—</span>
                     </div>
-                    <div class="flex items-center justify-between bg-[#1e1e3a] rounded-xl px-4 py-3">
-                        <span class="text-xs text-gray-500">Interested In</span>
-                        <span class="text-sm font-semibold" id="sum-interest">—</span>
+                    <div class="flex items-center justify-between bg-white/5 rounded-xl px-5 py-4 border border-white/5">
+                        <span class="text-sm text-gray-500">Interested In</span>
+                        <span class="text-base font-semibold" id="sum-interest">—</span>
                     </div>
-                    <div class="flex items-center justify-between bg-[#1e1e3a] rounded-xl px-4 py-3">
-                        <span class="text-xs text-gray-500">Status</span>
-                        <span class="text-sm font-semibold text-green-400">✓ Profile Active</span>
+                    <div class="flex items-center justify-between bg-white/5 rounded-xl px-5 py-4 border border-white/5">
+                        <span class="text-sm text-gray-500">Status</span>
+                        <span class="text-base font-semibold text-emerald-400">✓ Profile Active</span>
                     </div>
                 </div>
             </div>
         </div>
+
         <!-- CTA Button — Smartlink -->
-        <div class="text-center mb-8">
-            <a id="smartlink-btn" href="https://flaskledgeheadquarters.com/des94qwmxd?key=2f806f7ad5c719d0358bcc0871db13a0" target="_blank" rel="noopener noreferrer"
-                class="inline-block px-10 py-5 btn-gradient rounded-2xl text-white font-bold text-lg hover:opacity-90 transition active:scale-95 shadow-lg shadow-[#ff6b6b30]">
-                💘 View My Matches Now — It's Free!
+        <div class="text-center mb-10">
+            <a id="smartlink-btn" href="" target="_blank" rel="noopener noreferrer"
+                class="inline-block px-12 py-6 btn-gradient rounded-2xl text-white font-bold text-xl hover:opacity-90 transition-all duration-300 active:scale-95 shadow-2xl shadow-rose-500/30 pulse-ring">
+                <span class="heartbeat inline-block mr-2">💘</span> View My Matches Now — It's Free!
             </a>
-            <p class="text-[10px] text-gray-600 mt-3">Free registration required to view profiles</p>
+            <p class="text-xs text-gray-500 mt-4">Free registration required to view profiles</p>
         </div>
-        <!-- AD — 320x50 Banner (inside results) -->
-        <div class="flex justify-center mb-8">
-            <div class="ad-slot rounded-lg min-h-[50px]">
-                <script>
-                  atOptions = {
-                    'key' : 'f50daad12caf62fdc343a7cde6fcddff',
-                    'format' : 'iframe',
-                    'height' : 50,
-                    'width' : 320,
-                    'params' : {}
-                  };
-                </script>
-                <script src="https://flaskledgeheadquarters.com/f50daad12caf62fdc343a7cde6fcddff/invoke.js"></script>
-            </div>
-        </div>
+
         <!-- Secondary CTA with Smartlink -->
-        <div class="bg-gradient-to-r from-[#1a1a3e] to-[#2a1a3e] rounded-2xl p-6 border border-[#ff6b6b20] text-center mb-8">
-            <p class="text-lg font-bold mb-1">🔥 <span id="urgency-count">47</span> people in your area are looking right now!</p>
-            <p class="text-xs text-gray-500 mb-4">Don't miss your chance — profiles are filling up fast</p>
-            <a id="smartlink-btn-2" href="https://flaskledgeheadquarters.com/des94qwmxd?key=2f806f7ad5c719d0358bcc0871db13a0" target="_blank" rel="noopener noreferrer"
-                class="inline-block px-8 py-3 bg-white text-[#0f0f23] rounded-xl font-bold text-sm hover:bg-gray-200 transition">
+        <div class="glow-card rounded-2xl p-8 text-center border border-rose-500/20">
+            <p class="text-xl font-bold mb-2">🔥 <span id="urgency-count">47</span> people in your area are looking right now!</p>
+            <p class="text-sm text-gray-500 mb-6">Don't miss your chance — profiles are filling up fast</p>
+            <a id="smartlink-btn-2" href="" target="_blank" rel="noopener noreferrer"
+                class="inline-block px-10 py-4 bg-white text-gray-900 rounded-xl font-bold text-base hover:bg-gray-100 transition-all duration-300 shadow-lg">
                 Start Matching →
             </a>
         </div>
     </section>
-    <!-- ==================== AD — Native Banner (above testimonials) ==================== -->
-    <div class="max-w-4xl mx-auto px-4 pb-10">
-        <div class="ad-slot rounded-xl">
-            <script async="async" data-cfasync="false" src="https://flaskledgeheadquarters.com/9d81d3c59ca9b44b4a7ff85d7845d6df/invoke.js"></script>
-            <div id="container-9d81d3c59ca9b44b4a7ff85d7845d6df"></div>
-        </div>
-    </div>
-    <!-- ==================== SOCIAL PROOF / TESTIMONIALS ==================== -->
-    <section class="max-w-4xl mx-auto px-6 pb-16">
-        <h3 class="text-center text-sm font-semibold text-gray-500 uppercase tracking-widest mb-8">Real Success Stories</h3>
-        <div class="grid sm:grid-cols-3 gap-4">
-            <div class="bg-[#16162d] rounded-2xl p-5 border border-[#ffffff08]">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-red-400 flex items-center justify-center text-sm">JM</div>
+
+    <!-- ==================== TESTIMONIALS ==================== -->
+    <section class="relative z-10 max-w-4xl mx-auto px-6 pb-20">
+        <h3 class="text-center text-sm font-semibold text-gray-500 uppercase tracking-widest mb-10">Real Success Stories 💕</h3>
+        <div class="grid sm:grid-cols-3 gap-6">
+            <div class="glow-card rounded-2xl p-6 hover:border-rose-500/30 transition-all duration-300">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-sm font-bold shadow-lg shadow-rose-500/30">JM</div>
                     <div>
-                        <p class="text-sm font-semibold">Jessica & Mike</p>
-                        <p class="text-[10px] text-gray-600">Matched 6 months ago</p>
+                        <p class="text-base font-semibold">Jessica & Mike</p>
+                        <p class="text-xs text-gray-500">Matched 6 months ago</p>
                     </div>
                 </div>
-                <p class="text-xs text-gray-400 leading-relaxed">"We never expected to find each other online. LoveSpark's algorithm knew what we needed before we did! 💕"</p>
-                <div class="text-yellow-400 text-xs mt-2">★★★★★</div>
+                <p class="text-sm text-gray-400 leading-relaxed">"We never expected to find each other online. LoveSpark's algorithm knew what we needed before we did! 💕"</p>
+                <div class="text-amber-400 text-sm mt-4">★★★★★</div>
             </div>
-            <div class="bg-[#16162d] rounded-2xl p-5 border border-[#ffffff08]">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center text-sm">SA</div>
+            <div class="glow-card rounded-2xl p-6 hover:border-rose-500/30 transition-all duration-300">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-sm font-bold shadow-lg shadow-blue-500/30">SA</div>
                     <div>
-                        <p class="text-sm font-semibold">Sarah & Alex</p>
-                        <p class="text-[10px] text-gray-600">Engaged!</p>
+                        <p class="text-base font-semibold">Sarah & Alex</p>
+                        <p class="text-xs text-gray-500">Engaged!</p>
                     </div>
                 </div>
-                <p class="text-xs text-gray-400 leading-relaxed">"From our first chat to our engagement — all thanks to this amazing platform. It truly works! 💍"</p>
-                <div class="text-yellow-400 text-xs mt-2">★★★★★</div>
+                <p class="text-sm text-gray-400 leading-relaxed">"From our first chat to our engagement — all thanks to this amazing platform. It truly works! 💍"</p>
+                <div class="text-amber-400 text-sm mt-4">★★★★★</div>
             </div>
-            <div class="bg-[#16162d] rounded-2xl p-5 border border-[#ffffff08]">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-teal-400 flex items-center justify-center text-sm">DL</div>
+            <div class="glow-card rounded-2xl p-6 hover:border-rose-500/30 transition-all duration-300">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-sm font-bold shadow-lg shadow-emerald-500/30">DL</div>
                     <div>
-                        <p class="text-sm font-semibold">David & Lisa</p>
-                        <p class="text-[10px] text-gray-600">Married!</p>
+                        <p class="text-base font-semibold">David & Lisa</p>
+                        <p class="text-xs text-gray-500">Married!</p>
                     </div>
                 </div>
-                <p class="text-xs text-gray-400 leading-relaxed">"Best decision I ever made was clicking that 'Find Soulmate' button. Now we're happily married! 🥂"</p>
-                <div class="text-yellow-400 text-xs mt-2">★★★★★</div>
+                <p class="text-sm text-gray-400 leading-relaxed">"Best decision I ever made was clicking that 'Find Soulmate' button. Now we're happily married! 🥂"</p>
+                <div class="text-amber-400 text-sm mt-4">★★★★★</div>
             </div>
         </div>
     </section>
-    <!-- ==================== BOTTOM AD — 728x90 Banner ==================== -->
-    <div class="max-w-4xl mx-auto px-4 pb-10">
-        <div class="ad-slot rounded-xl min-h-[90px]">
-            <script>
-              atOptions = {
-                'key' : '493a5692f63e66ebcfa2cc7c073ce40e',
-                'format' : 'iframe',
-                'height' : 90,
-                'width' : 728,
-                'params' : {}
-              };
-            </script>
-            <script src="https://flaskledgeheadquarters.com/493a5692f63e66ebcfa2cc7c073ce40e/invoke.js"></script>
-        </div>
-    </div>
+
     <!-- ==================== FOOTER ==================== -->
-    <footer class="border-t border-[#ffffff08] py-8 px-6">
-        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-2">
-                <span class="text-lg">💘</span>
-                <span class="text-sm font-bold">Love<span class="text-[#ff6b6b]">Spark</span></span>
+    <footer class="relative z-10 border-t border-white/5 py-10 px-6">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl heartbeat">💘</span>
+                <span class="text-lg font-bold">Love<span class="text-rose-400">Spark</span></span>
             </div>
-            <div class="flex items-center gap-6 text-xs text-gray-600">
-                <a href="#" class="hover:text-gray-400 transition">Privacy</a>
-                <a href="#" class="hover:text-gray-400 transition">Terms</a>
-                <a href="#" class="hover:text-gray-400 transition">Contact</a>
-                <a href="#" class="hover:text-gray-400 transition">DMCA</a>
+            <div class="flex items-center gap-8 text-sm text-gray-500">
+                <a href="#" class="hover:text-rose-400 transition-colors duration-300">Privacy</a>
+                <a href="#" class="hover:text-rose-400 transition-colors duration-300">Terms</a>
+                <a href="#" class="hover:text-rose-400 transition-colors duration-300">Contact</a>
+                <a href="#" class="hover:text-rose-400 transition-colors duration-300">DMCA</a>
             </div>
-            <p class="text-[10px] text-gray-700">© 2025 LoveSpark. All rights reserved.</p>
+            <p class="text-xs text-gray-600">© 2025 LoveSpark. All rights reserved.</p>
         </div>
     </footer>
-    <!-- Floating Hearts Container -->
-    <div id="hearts-container" class="fixed inset-0 pointer-events-none z-50 overflow-hidden"></div>
+
     <!-- ==================== JAVASCRIPT ==================== -->
     <script>
+        // ===================== SMARTLINK URL =====================
+        // Paste your smartlink URL here
+        const SMARTLINK_URL = 'https://molecularshindy.com/fxhqkztjcz?key=f1fc5af976572b0ab8526603d565b628';
+
         // ===================== STATE =====================
         let userData = { age: 25, gender: '', interest: '' };
         let currentStep = 1;
+
+        // ===================== AMBIENT HEARTS =====================
+        function createAmbientHearts() {
+            const container = document.getElementById('ambient-hearts');
+            const hearts = ['❤️', '💕', '💘', '💖', '💗', '💝', '💓', '💞'];
+            
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('span');
+                heart.className = 'ambient-heart';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                heart.style.animationDuration = (Math.random() * 15 + 20) + 's';
+                heart.style.animationDelay = (Math.random() * 20) + 's';
+                container.appendChild(heart);
+            }
+        }
+        createAmbientHearts();
+
+        // ===================== BURST HEARTS =====================
+        function spawnHearts() {
+            const container = document.getElementById('hearts-container');
+            const hearts = ['❤️', '💕', '💘', '💖', '💗', '💝', '💓', '💞', '🌹', '✨'];
+            
+            for (let i = 0; i < 25; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('span');
+                    heart.className = 'float-heart';
+                    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                    heart.style.left = (Math.random() * 80 + 10) + 'vw';
+                    heart.style.top = (Math.random() * 50 + 40) + 'vh';
+                    heart.style.fontSize = (Math.random() * 30 + 20) + 'px';
+                    heart.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    container.appendChild(heart);
+                    setTimeout(() => heart.remove(), 4000);
+                }, i * 100);
+            }
+        }
+
         // ===================== RANDOM VISITOR COUNTER =====================
         let visitorBase = Math.floor(Math.random() * 5000) + 10000;
         function updateVisitorCount() {
@@ -531,6 +700,7 @@
         }
         updateVisitorCount();
         setInterval(updateVisitorCount, 3000);
+
         // ===================== AGE CONTROLS =====================
         function updateAge(val) {
             val = Math.max(18, Math.min(65, parseInt(val)));
@@ -541,6 +711,7 @@
         function adjustAge(delta) {
             updateAge(userData.age + delta);
         }
+
         // ===================== GENDER SELECTION =====================
         function selectGender(gender, el) {
             userData.gender = gender;
@@ -548,6 +719,7 @@
             el.classList.add('active');
             document.getElementById('step2-next').disabled = false;
         }
+
         // ===================== INTEREST SELECTION =====================
         function selectInterest(interest, el) {
             userData.interest = interest;
@@ -560,6 +732,7 @@
             document.getElementById('find-btn').disabled = !(userData.interest && terms);
         }
         document.getElementById('terms').addEventListener('change', updateFindBtn);
+
         // ===================== STEP NAVIGATION =====================
         function goToStep(step) {
             document.querySelectorAll('#step1, #step2, #step3').forEach(el => el.classList.add('hidden'));
@@ -567,17 +740,28 @@
             target.classList.remove('hidden');
             target.classList.add('fade-in-up');
             for (let i = 1; i <= 3; i++) {
-                document.getElementById('step' + i + '-dot').style.background = i <= step ? '#ff6b6b' : '#2a2a4a';
+                const dot = document.getElementById('step' + i + '-dot');
+                if (i <= step) {
+                    dot.classList.add('bg-gradient-to-r', 'from-rose-500', 'to-pink-500', 'shadow-lg', 'shadow-rose-500/30');
+                    dot.classList.remove('bg-white/10');
+                } else {
+                    dot.classList.remove('bg-gradient-to-r', 'from-rose-500', 'to-pink-500', 'shadow-lg', 'shadow-rose-500/30');
+                    dot.classList.add('bg-white/10');
+                }
             }
             currentStep = step;
         }
+
         // ===================== FIND SOULMATE =====================
         function findSoulmate() {
             if (!userData.interest) return;
+            
             document.getElementById('form-section').classList.add('hidden');
             document.getElementById('loading-section').classList.remove('hidden');
             document.getElementById('loading-section').scrollIntoView({ behavior: 'smooth' });
+            
             spawnHearts();
+            
             let progress = 0;
             const loadingTexts = [
                 { at: 10, emoji: '🔍', text: 'Scanning profiles...', sub: 'Checking compatibility algorithms' },
@@ -586,6 +770,7 @@
                 { at: 75, emoji: '💕', text: 'Found potential matches!', sub: 'Ranking by compatibility percentage' },
                 { at: 90, emoji: '✨', text: 'Preparing your results...', sub: 'Almost there!' },
             ];
+            
             const interval = setInterval(() => {
                 progress += Math.random() * 3 + 1;
                 if (progress >= 100) {
@@ -595,39 +780,48 @@
                 }
                 document.getElementById('progress-bar').style.width = progress + '%';
                 document.getElementById('progress-text').textContent = Math.floor(progress) + '%';
-                const lt = loadingTexts.find(l => progress >= l.at && progress < l.at + 10);
+                
+                const lt = loadingTexts.find(l => progress >= l.at && progress < l.at + 15);
                 if (lt) {
                     document.getElementById('loading-emoji').textContent = lt.emoji;
                     document.getElementById('loading-text').textContent = lt.text;
                     document.getElementById('loading-sub').textContent = lt.sub;
                 }
-            }, 120);
+            }, 100);
         }
+
         // ===================== SHOW RESULTS =====================
         function showResults() {
             document.getElementById('loading-section').classList.add('hidden');
             document.getElementById('results-section').classList.remove('hidden');
             document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+            
+            spawnHearts();
+            
             const age = userData.age;
             const matchCount = Math.floor(Math.random() * 300) + 150;
             const compatPct = Math.floor(Math.random() * 15) + 82;
             const onlineNow = Math.floor(Math.random() * 80) + 40;
             const nearby = Math.floor(Math.random() * 50) + 20;
+            
             animateCounter('stat-matches', matchCount);
             animateCounter('stat-compat', compatPct, '%');
             animateCounter('stat-online', onlineNow);
             animateCounter('stat-nearby', nearby);
+            
             setTimeout(() => {
                 const offset = 283 - (283 * compatPct / 100);
                 document.getElementById('compat-circle').style.strokeDashoffset = offset;
                 animateCounter('compat-value', compatPct, '%');
             }, 400);
+            
             setTimeout(() => {
                 const bars = generateAgeDistribution(age);
                 for (let i = 0; i < 5; i++) {
                     document.getElementById('bar' + (i + 1)).style.height = bars[i] + '%';
                 }
             }, 600);
+            
             setTimeout(() => {
                 const ints = [
                     Math.floor(Math.random() * 25) + 70,
@@ -641,11 +835,19 @@
                     document.getElementById('int' + i + '-val').textContent = ints[i - 1] + '%';
                 }
             }, 800);
+            
             document.getElementById('sum-age').textContent = age + ' years old';
             document.getElementById('sum-gender').textContent = userData.gender;
             document.getElementById('sum-interest').textContent = userData.interest;
             document.getElementById('urgency-count').textContent = Math.floor(Math.random() * 40) + 30;
+
+            // Set smartlink URLs
+            if (SMARTLINK_URL) {
+                document.getElementById('smartlink-btn').href = SMARTLINK_URL;
+                document.getElementById('smartlink-btn-2').href = SMARTLINK_URL;
+            }
         }
+
         // ===================== HELPERS =====================
         function animateCounter(id, target, suffix) {
             suffix = suffix || '';
@@ -661,6 +863,7 @@
                 el.textContent = current + suffix;
             }, 40);
         }
+
         function generateAgeDistribution(userAge) {
             const ranges = [[18, 24], [25, 30], [31, 37], [38, 45], [46, 65]];
             let bars = ranges.map(r => {
@@ -671,21 +874,20 @@
             const max = Math.max(...bars);
             return bars.map(b => Math.round(b / max * 100));
         }
-        function spawnHearts() {
-            const container = document.getElementById('hearts-container');
-            const hearts = ['❤️', '💕', '💘', '💖', '💗', '💝'];
-            for (let i = 0; i < 20; i++) {
-                setTimeout(() => {
-                    const heart = document.createElement('span');
-                    heart.className = 'float-heart text-2xl';
-                    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-                    heart.style.left = Math.random() * 100 + 'vw';
-                    heart.style.top = Math.random() * 100 + 'vh';
-                    container.appendChild(heart);
-                    setTimeout(() => heart.remove(), 2500);
-                }, i * 150);
+
+        // ===================== SMARTLINK CLICK HANDLERS =====================
+        document.getElementById('smartlink-btn').addEventListener('click', function(e) {
+            if (!SMARTLINK_URL) {
+                e.preventDefault();
+                alert('Please configure the smartlink URL');
             }
-        }
+        });
+        document.getElementById('smartlink-btn-2').addEventListener('click', function(e) {
+            if (!SMARTLINK_URL) {
+                e.preventDefault();
+                alert('Please configure the smartlink URL');
+            }
+        });
     </script>
 </body>
 </html>
